@@ -3,9 +3,9 @@ import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose'; 
 import bcrypt from 'bcrypt'; 
 import { validationResult } from "express-validator";
-import { registerValidator } from '../validators/auth.js'
+import { registerValidator } from "./validators/auth.js";
 
-import UserModel from '../models/User.js'
+import UserModel from "./models/User.js";
 
 mongoose
     .connect("mongodb://admin:secret@localhost:27017/blog", {
@@ -18,14 +18,11 @@ mongoose
         console.log("DB error", err);
     });
 
-const app = express(); 
-app.use(express.json())
+const app = express();
+app.use(express.json());
 
- 
-
-app.post('/auth/register', registerValidator, async (req, res) => {
-
-	try {
+app.post("/auth/register", registerValidator, async (req, res) => {
+    try {
         // Валидация данных
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -43,65 +40,76 @@ app.post('/auth/register', registerValidator, async (req, res) => {
             passwordHash: hash,
         });
 
-		const user = await doc.save();
-		
-		const token = jwt.sign({
-			_id: user._id
-		}, 'secret_key', {
-			expiresIn: '30d'
-		}); 
+        const user = await doc.save();
 
-		const { passwordHash, ...userData } = user._doc; 
+        const token = jwt.sign(
+            {
+                _id: user._id,
+            },
+            "secret_key",
+            {
+                expiresIn: "30d",
+            },
+        );
 
-		res.status(200).json({ ...userData, token });
-		
-	} catch (err) {
-		console.log(err)
-		res.status(500).json({
-			message: 'Не удалось зарегистрироваться'
-		})
-	}
-})
+        const { passwordHash, ...userData } = user._doc;
 
+        res.status(200).json({ ...userData, token });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: "Не удалось зарегистрироваться",
+        });
+    }
+});
 
-app.post('/auth/login', async (req, res) => {
-	try {
-		const user = await UserModel.findOne({ email: req.body.email });
+app.post("/auth/login", async (req, res) => {
+    try {
+        const user = await UserModel.findOne({ email: req.body.email });
 
-		if (!user) {
-			return res.status(404).json({ message: 'Пользователь не найден' })
-		}
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
 
-	 
+        const isValidPass = await bcrypt.compare(
+            req.body.password,
+            user._doc.passwordHash,
+        );
 
-		const isValidPass = await bcrypt.compare(req.body.password, user._doc.passwordHash)
+        if (!isValidPass) {
+            return res
+                .status(400)
+                .json({ message: "Не верен логин или пароль" });
+        }
 
-		if (!isValidPass) {
-			return res.status(400).json({ message: 'Не верен логин или пароль' })
-		}
+        const token = jwt.sign(
+            {
+                _id: user._id,
+            },
+            "secret_key",
+            {
+                expiresIn: "30d",
+            },
+        );
 
+        const { passwordHash, ...userData } = user._doc;
 
-		const token = jwt.sign({
-			_id: user._id
-		}, 'secret_key', {
-			expiresIn: '30d'
-		}); 
-
-
-		const { passwordHash, ...userData } = user._doc; 
-
-		res.json({
-			...userData, 
-			token
-		})
-
-	} catch (err) {
-		console.log(err);
+        res.json({
+            ...userData,
+            token,
+        });
+    } catch (err) {
+        console.log(err);
         res.status(500).json({
             message: "Не удалось авторизоваться",
         });
-	}
-})
+    }
+});
+
+app.get("/auth/me", async (req, res) => {
+    try {
+    } catch (err) {}
+});
 
 
 app.listen(4001, (err) => {
