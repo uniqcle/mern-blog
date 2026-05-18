@@ -91,6 +91,7 @@ export const login = async (req, res) => {
 
 export const getMe = async (req, res) => {
     try {
+        // userId берем из middleware
         const user = await UserModel.findById(req.userId);
 
         if (!user) {
