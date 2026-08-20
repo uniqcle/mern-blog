@@ -1,5 +1,6 @@
 import PostModel from "../models/Post.js";
 
+
 export const getAll = async (req, res) => {
     try {
         const posts = await PostModel.find().populate("user").exec();
@@ -76,6 +77,42 @@ export const remove = async (req, res) => {
     } catch (err) {
         res.status(500).json({
             message: "Не удалось удалить статью",
+        });
+    }
+};
+
+export const update = async (req, res) => {
+    try {
+        // Валидация данных
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json(errors.array());
+        }
+
+        const postId = req.params.id;
+
+        const updatedPost = await PostModel.findByIdAndUpdate(
+            postId,
+            {
+                title: req.body.title,
+                text: req.body.text,
+                imageUrl: req.body.imageUrl,
+                tags: req.body.tags,
+                // user: req.userId, // ❌ НЕ обновляем user! Он не должен меняться
+            },
+            {
+                new: true, // Вернуть обновленный документ
+                runValidators: true, // Запустить валидацию схемы
+            },
+        );
+
+        res.status(200).json({
+            message: "Статья успешно обновлена",
+            post: updatedPost,
+        });
+    } catch (err) {
+        res.status(500).json({
+            message: "Не удалось обновить статью",
         });
     }
 };

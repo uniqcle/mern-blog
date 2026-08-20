@@ -1,16 +1,16 @@
 import bcrypt from "bcrypt";
-import { validationResult } from "express-validator";
+//import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken"; 
 
 import UserModel from "../models/User.js";
 
 export const register = async (req, res) => {
     try {
-        // Валидация данных
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json(errors.array());
-        }
+        // Валидация данных перемещен в middleware
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) {
+        //     return res.status(400).json(errors.array());
+        // }
 
         const password = req.body.password;
         const salt = await bcrypt.genSalt(10);
@@ -38,6 +38,7 @@ export const register = async (req, res) => {
         const { passwordHash, ...userData } = user._doc;
 
         res.status(200).json({ ...userData, token });
+        
     } catch (err) {
         console.log(err);
         res.status(500).json({
