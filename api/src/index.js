@@ -23,6 +23,7 @@ mongoose
 
 const app = express();
 
+
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
@@ -58,11 +59,11 @@ app.patch(
     PostController.update,
 );
 
-// Использование в маршруте остается таким же
+// Использование в маршруте остается таким же. avatar это имя в запросе
 app.post("/profile", checkAuth, upload.single("avatar"), (req, res) => {
     // ...
     res.json({
-        url: `/uploads/${req.file.originalname}`,
+        url: `/uploads/${req.file.filename}`,
     });
 });
 

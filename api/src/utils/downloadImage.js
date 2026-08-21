@@ -17,18 +17,29 @@ const storage = multer.diskStorage({
 
 // Настройка фильтра файлов (принимаем только картинки)
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png/;
-    const extname = allowedTypes.test(
+ 
+
+    // const allowedTypes = /jpeg|jpg|png|webp/;
+    // const extname = allowedTypes.test(
+    //     path.extname(file.originalname).toLowerCase(),
+    // );
+    // const mimetype = allowedTypes.test(file.mimetype);
+
+    // Проверяем только расширение файла
+    const allowedExts = /\.(jpg|jpeg|png|webp|gif)$/i;
+    const extname = allowedExts.test(
         path.extname(file.originalname).toLowerCase(),
     );
-    const mimetype = allowedTypes.test(file.mimetype);
 
-    if (mimetype && extname) {
+
+
+    // if (mimetype && extname) {
+    if ( extname) {
         return cb(null, true); // Принять файл
     } else {
-        cb(new Error("Разрешены только изображения (jpeg, jpg, png)!")); // Отклонить
+        cb(new Error("Разрешены только изображения (jpeg, jpg, png, webp)!")); // Отклонить
     }
-};
+};;;
 
 // Собираем всё вместе
 const upload = multer({

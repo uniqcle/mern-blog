@@ -1,5 +1,5 @@
 import PostModel from "../models/Post.js";
-
+import { validationResult } from "express-validator";
 
 export const getAll = async (req, res) => {
     try {
@@ -111,6 +111,8 @@ export const update = async (req, res) => {
             post: updatedPost,
         });
     } catch (err) {
+        console.log(err);
+
         res.status(500).json({
             message: "Не удалось обновить статью",
         });
