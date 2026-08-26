@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 
 import { registerValidator, loginValidator } from "./validators/auth.js";
 import { postValidator } from "./validators/post.js";
@@ -23,8 +24,8 @@ mongoose
 
 const app = express();
 
-
 app.use(express.json());
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 
 app.post(
@@ -58,6 +59,12 @@ app.patch(
     handleValidationErrors,
     PostController.update,
 );
+
+// тэги
+app.get("/tags", PostController.getLastTags);
+
+
+
 
 // Использование в маршруте остается таким же. avatar это имя в запросе
 app.post("/profile", checkAuth, upload.single("avatar"), (req, res) => {
