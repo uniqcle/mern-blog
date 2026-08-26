@@ -29,6 +29,7 @@ export const Login = () => {
           email: "test@test.ru",
           password: "123456",
       },
+      mode: "onChange",
   });
 
   const onSubmit = async (values) => {
@@ -73,7 +74,13 @@ export const Login = () => {
                   helperText={errors.password?.message}
                   fullWidth
               />
-              <Button size="large" type="submit" variant="contained" fullWidth>
+              <Button
+                  disabled={!isValid}
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+              >
                   Войти
               </Button>
           </form>

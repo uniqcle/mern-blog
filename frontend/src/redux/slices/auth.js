@@ -15,11 +15,19 @@ export const fetchAuthMe = createAsyncThunk("/auth/fetchAuthMe", async (params) 
 }); 
 
 
+export const fetchRegister = createAsyncThunk(
+    "/auth/fetchRegister",
+    async (params) => {
+        const { data } = await axios.get("/auth/register");
+
+        return data;
+    },
+);
 
 const initialState = {
-	data: null, 
-	status: 'loading', 
-}
+    data: null,
+    status: "loading",
+};
 
 const authSlice = createSlice({
     name: "auth",
@@ -30,6 +38,7 @@ const authSlice = createSlice({
         },
     },
     extraReducers: {
+        // логин
         [fetchAuth.pending]: (state) => {
             state.status = "loading";
             state.data = null;
@@ -42,7 +51,7 @@ const authSlice = createSlice({
             state.status = "error";
             state.data = null;
         },
-
+        // авторизован или нет
         [fetchAuthMe.pending]: (state) => {
             state.status = "loading";
             state.data = null;
@@ -54,9 +63,21 @@ const authSlice = createSlice({
         [fetchAuthMe.rejected]: (state) => {
             state.status = "error";
             state.data = null;
-		},
-		
+        },
 
+        // регистрация
+        [fetchRegister.pending]: (state) => {
+            state.status = "loading";
+            state.data = null;
+        },
+        [fetchRegister.fulfilled]: (state, action) => {
+            state.status = "loaded";
+            state.data = action.payload;
+        },
+        [fetchRegister.rejected]: (state) => {
+            state.status = "error";
+            state.data = null;
+        },
     },
 });
 
