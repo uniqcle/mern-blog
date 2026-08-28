@@ -32,17 +32,17 @@ export const Registration = () => {
       mode: "onChange",
   });
 
-  const onSubmit = async (values) => {
-      const data = await dispatch(fetchRegister(values));
+    const onSubmit = async (values) => {
+        const data = await dispatch(fetchRegister(values));
 
-      if (!data.payload) {
-          return alert("Не удалось авторизоваться!");
-      }
+        if (!data.payload) {
+            return alert("Не удалось авторизоваться!");
+        }
 
-      if ("token" in data.payload) {
-          window.localStorage.setItem("token", data.payload.token);
-      }
-  };
+        if ("token" in data.payload) {
+            window.localStorage.setItem("token", data.payload.token);
+        }
+    };
 
   if (isAuth) {
       return <Navigate to="/" />;
