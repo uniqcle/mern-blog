@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useRef, useMemo } from "react";
+import React, {
+    useEffect,
+    useState,
+    useCallback,
+    useRef,
+    useMemo,
+} from "react";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -34,6 +40,9 @@ export const AddPost = () => {
             const { data } = await axios.post("/profile", formData);
 
             setImageUrl(data.url);
+            console.log(data.url);
+
+            console.log(imageUrl);
         } catch (err) {
             console.warn(err);
         }

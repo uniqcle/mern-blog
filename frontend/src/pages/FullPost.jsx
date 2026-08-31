@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Markdown from "react-markdown";
 
 import { Post } from "../components/Post";
 import { Index } from "../components/AddComment";
@@ -32,12 +33,14 @@ export const FullPost = () => {
         return <Post isLoading={true} isFullPost />;
     }
 
+    console.log(data);
+
     return (
         <>
             <Post
                 id={data._id}
                 title={data.title}
-                imageUrl={data.imageUrl}
+                imageUrl={`http://localhost:4001${data.imageUrl}`}
                 user={data.user}
                 createdAt={data.createdAt}
                 viewsCount={data.viewsCount}
@@ -45,7 +48,9 @@ export const FullPost = () => {
                 tags={data.tags}
                 isEditable
             >
-                <p>{data.text}</p>
+                <p>
+                    <Markdown>{data.text}</Markdown>
+                </p>
             </Post>
             <CommentsBlock
                 items={[
